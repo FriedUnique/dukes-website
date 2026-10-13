@@ -1,0 +1,34 @@
+---
+import { nav } from '../data/nav';
+const path = Astro.url.pathname;
+const active = (h: string) => (h === '/' ? path === '/' : path.startsWith(h));
+---
+<header class="sticky top-0 z-50 bg-ink/95 backdrop-blur border-b border-gold/20">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
+    <a href="/" class="font-display text-2xl font-bold text-gold" aria-label="dukes – Start">
+      dukes<span class="text-cream/60 text-sm font-sans font-medium ml-2 hidden sm:inline">sihl3</span>
+    </a>
+    <nav class="hidden lg:flex gap-7" aria-label="Hauptnavigation">
+      {nav.map((n) => (
+        <a href={n.href} class:list={['text-xs font-semibold tracking-widest py-2 border-b-2 transition-colors hover:text-gold', active(n.href) ? 'text-gold border-gold' : 'text-cream/80 border-transparent']}>{n.label}</a>
+      ))}
+    </nav>
+    <button id="menu-btn" class="lg:hidden text-cream p-2" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-nav">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+  <nav id="mobile-nav" class="hidden lg:hidden border-t border-gold/20 bg-ink px-5 pb-4" aria-label="Mobile Navigation">
+    {nav.map((n) => (
+      <a href={n.href} class:list={['block py-3 text-sm font-semibold tracking-widest border-b border-white/5', active(n.href) ? 'text-gold' : 'text-cream/85']}>{n.label}</a>
+    ))}
+  </nav>
+</header>
+<script>
+  const b = document.getElementById('menu-btn')!;
+  const m = document.getElementById('mobile-nav')!;
+  b.addEventListener('click', () => {
+    const open = m.classList.toggle('hidden') === false;
+    b.setAttribute('aria-expanded', String(open));
+  });
+</script>
+

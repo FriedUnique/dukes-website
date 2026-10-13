@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1a110b;
+  --color-bark: #2b1d13;
+  --color-wood: #4a3322;
+  --color-gold: #e0a030;
+  --color-gold-dark: #b87a14;
+  --color-rust: #a8481c;
+  --color-cream: #f7f0e3;
+  --color-sand: #e9dcc3;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Zilla Slab", Georgia, serif;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-cream text-bark font-sans antialiased; }
+  h1, h2, h3 { @apply font-display font-bold tracking-tight; }
+}

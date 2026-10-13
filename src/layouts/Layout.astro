@@ -1,0 +1,25 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/zilla-slab/600.css';
+import '@fontsource/zilla-slab/700.css';
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+interface Props { title?: string; description?: string }
+const { title = 'dukes Restaurant, Partylokal sihl3', description = 'Steakhouse, Eventsaal, Club und Saloon – dukes Restaurant, Partylokal sihl3.' } = Astro.props;
+---
+<!doctype html>
+<html lang="de-CH">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-gold focus:p-3">Zum Inhalt</a>
+    <Navbar />
+    <main id="main"><slot /></main>
+    <Footer />
+  </body>
+</html>
