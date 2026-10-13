@@ -1,0 +1,11 @@
+---
+interface Props { eyebrow?: string; title: string; intro?: string }
+const { eyebrow, title, intro } = Astro.props;
+---
+<section class="bg-ink text-cream">
+  <div class="mx-auto max-w-7xl px-5 py-16 text-center sm:py-24">
+    {eyebrow && <p class="text-sm font-semibold uppercase tracking-[0.3em] text-gold">{eyebrow}</p>}
+    <h1 class="mt-2 text-4xl sm:text-6xl">{title}</h1>
+    {intro && <p class="mx-auto mt-4 max-w-2xl text-cream/85">{intro}</p>}
+  </div>
+</section>

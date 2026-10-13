@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { getCollection } from 'astro:content';
+const weeks = (await getCollection('wochenmenu')).sort((a, b) => +b.data.from - +a.data.from);
+const today = new Date();
+const current = weeks.find((w) => +w.data.from <= +today) ?? weeks[0];
+const upcoming = weeks.filter((w) => +w.data.from > +today && w !== current).reverse();
+const fmt = (d: Date) => d.toLocaleDateString('de-CH', { day: 'numeric', month: 'long' });
+---
+<Layout title="Wochenmenü – dukes">
+  <PageHeader eyebrow="Mittagsmenü" title="Wochenmenü" intro="Frisch gekocht, jede Woche neu." />
+  <section class="mx-auto max-w-3xl px-5 py-16">
+    {current ? (
+      <>
+        <h2 class="text-3xl">{current.data.week} <span class="text-lg font-normal text-bark/60">ab {fmt(current.data.from)}</span></h2>
+        <ul class="mt-6 divide-y divide-bark/15">
+          {current.data.items.map((i) => (
+            <li class="flex items-start justify-between gap-6 py-5">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-widest text-rust">{i.day}</p>
+                <p class="text-lg font-semibold">{i.dish} {i.vegetarian && <span class="ml-1 rounded-full bg-green-700/15 px-2 py-0.5 text-xs text-green-800">vegi</span>}</p>
+                {i.description && <p class="text-sm text-bark/70">{i.description}</p>}
+              </div>
+              <p class="whitespace-nowrap font-semibold">{i.price}</p>
+            </li>
+          ))}
+        </ul>
+      </>
+    ) : <p>Das Wochenmenü folgt in Kürze.</p>}
+    {upcoming.length > 0 && (
+      <div class="mt-14 rounded-2xl bg-sand p-6">
+        <h3 class="text-xl">Vorschau</h3>
+        <ul class="mt-2 text-sm">{upcoming.map((w) => <li>{w.data.week} – ab {fmt(w.data.from)}</li>)}</ul>
+      </div>
+    )}
+    <p class="mt-10 text-sm text-bark/60">Mo–Fr 08:00–14:00 · Reservation: 043 244 40 40</p>
+  </section>
+</Layout>

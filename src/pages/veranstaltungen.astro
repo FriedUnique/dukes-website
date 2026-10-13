@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { getCollection, render } from 'astro:content';
+const now = new Date(); now.setHours(0, 0, 0, 0);
+const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
+const upcoming = all.filter((e) => +e.data.date >= +now);
+const items = await Promise.all(upcoming.map(async (e) => ({ e, Content: (await render(e)).Content })));
+---
+<Layout title="Veranstaltungen – dukes">
+  <PageHeader eyebrow="Was läuft" title="Veranstaltungen" intro="Partys, Kurse und Events im Eventsaal und im Sihl3 Club." />
+  <section class="mx-auto max-w-4xl px-5 py-16">
+    {items.length === 0 && <p>Aktuell sind keine Veranstaltungen geplant.</p>}
+    <ul class="space-y-6">
+      {items.map(({ e, Content }) => (
+        <li class="flex gap-5 overflow-hidden rounded-2xl bg-sand p-5">
+          <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-xl bg-ink text-cream">
+            <span class="text-2xl font-bold leading-none">{e.data.date.getDate()}</span>
+            <span class="text-xs uppercase">{e.data.date.toLocaleDateString('de-CH', { month: 'short' })}</span>
+          </div>
+          <div>
+            <h2 class="text-2xl">{e.data.title}</h2>
+            <p class="text-sm font-semibold text-rust">{e.data.area}{e.data.time && ` · ${e.data.time} Uhr`}{e.data.price && ` · ${e.data.price}`}</p>
+            <div class="mt-2 text-bark/80"><Content /></div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>

@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+<Layout title="Lokal mieten – dukes">
+  <PageHeader eyebrow="Feiern bei dukes" title="Lokal mieten" intro="Der passende Rahmen für jeden Anlass." />
+  <section class="mx-auto max-w-4xl space-y-12 px-5 py-16">
+    <div class="grid gap-8 md:grid-cols-2 md:items-center">
+      <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=70" alt="Eventsaal" loading="lazy" class="rounded-2xl shadow-lg" />
+      <div><h2 class="text-3xl">Ihr Anlass bei uns</h2><p class="mt-3 text-bark/80">Eventsaal, Saloon, Club und Terrasse – einzeln oder kombiniert mietbar, inklusive Gastro-Service. Platzhaltertext – bitte Kapazitäten und Preise ergänzen.</p></div>
+    </div>
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {['Firmenanlässe','Hochzeiten & Geburtstage','Partys & Clubnächte','Apéros & Seminare'].map((t) => <li class="rounded-2xl bg-sand p-5 font-semibold">{t}</li>)}
+    </ul>
+    <div class="rounded-2xl bg-wood p-8 text-cream"><h3 class="text-2xl text-gold">Anfrage</h3><p class="mt-2">Schreiben Sie uns an <a class="underline" href="mailto:reservation@dukes.ch">reservation@dukes.ch</a> oder rufen Sie an: <a class="underline" href="tel:+41432444040">043 244 40 40</a>.</p></div>
+  </section>
+</Layout>
