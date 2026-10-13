@@ -1,30 +1,88 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { getCollection, render } from 'astro:content';
-const now = new Date(); now.setHours(0, 0, 0, 0);
-const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
-const upcoming = all.filter((e) => +e.data.date >= +now);
-const items = await Promise.all(upcoming.map(async (e) => ({ e, Content: (await render(e)).Content })));
+import EventCard from '../components/EventCard.astro';
+import { getEvents } from '../lib/content';
+
+const events = await getEvents();
+const PAGE_SIZE = 6; // so viele werden angezeigt, Rest per "Mehr anzeigen"
+const months = [...new Set(events.map((e) => e.data.date.toISOString().slice(0, 7)))];
+const monthLabel = (m: string) => new Date(`${m}-01T00:00:00Z`).toLocaleDateString('de-CH', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const input = 'w-full normal-case tracking-normal font-normal text-bark rounded-xl border border-bark/20 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40';
 ---
 <Layout title="Veranstaltungen – dukes">
-  <PageHeader eyebrow="Was läuft" title="Veranstaltungen" intro="Partys, Kurse und Events im Eventsaal und im Sihl3 Club." />
-  <section class="mx-auto max-w-4xl px-5 py-16">
-    {items.length === 0 && <p>Aktuell sind keine Veranstaltungen geplant.</p>}
-    <ul class="space-y-6">
-      {items.map(({ e, Content }) => (
-        <li class="flex gap-5 overflow-hidden rounded-2xl bg-sand p-5">
-          <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-xl bg-ink text-cream">
-            <span class="text-2xl font-bold leading-none">{e.data.date.getDate()}</span>
-            <span class="text-xs uppercase">{e.data.date.toLocaleDateString('de-CH', { month: 'short' })}</span>
-          </div>
-          <div>
-            <h2 class="text-2xl">{e.data.title}</h2>
-            <p class="text-sm font-semibold text-rust">{e.data.area}{e.data.time && ` · ${e.data.time} Uhr`}{e.data.price && ` · ${e.data.price}`}</p>
-            <div class="mt-2 text-bark/80"><Content /></div>
-          </div>
-        </li>
-      ))}
+  <PageHeader eyebrow="Was läuft" title="Veranstaltungen" intro="Partys, Kurse und Live-Musik im Eventsaal und im Sihl3 Club." />
+  <section class="mx-auto max-w-4xl px-5 py-12">
+    <form id="filter" class="grid gap-3 rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-bark/10 sm:grid-cols-2 lg:grid-cols-4" onsubmit="return false">
+      <label class="text-xs font-semibold uppercase tracking-widest text-bark/70 sm:col-span-2 lg:col-span-4">Suche
+        <input name="q" type="search" placeholder="z.B. Party, Tanzkurs, Club …" class={`${input} mt-1`} />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-widest text-bark/70">Monat
+        <select name="month" class={`${input} mt-1`}>
+          <option value="">Alle</option>
+          {months.map((m) => <option value={m}>{monthLabel(m)}</option>)}
+        </select>
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-widest text-bark/70">Von
+        <input name="from" type="date" class={`${input} mt-1`} />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-widest text-bark/70">Bis
+        <input name="to" type="date" class={`${input} mt-1`} />
+      </label>
+      <div class="flex items-end">
+        <button type="reset" class="w-full rounded-xl border border-bark/20 px-3 py-2 text-sm font-semibold hover:border-rust hover:text-rust">Zurücksetzen</button>
+      </div>
+    </form>
+
+    <p id="count" class="mt-6 text-sm text-bark/70" aria-live="polite"></p>
+    <ul id="events" class="mt-3 space-y-5">
+      {events.map((e) => <EventCard event={e} />)}
     </ul>
+    <p id="empty" class="mt-6 hidden">Keine Veranstaltungen für diese Auswahl.</p>
+    <div class="mt-8 text-center">
+      <button id="more" type="button" class="hidden rounded-full bg-ink px-7 py-3 font-semibold text-cream hover:bg-rust">Mehr anzeigen</button>
+    </div>
   </section>
 </Layout>
+
+<script define:vars={{ PAGE_SIZE }}>
+  const form = document.getElementById('filter');
+  const items = [...document.querySelectorAll('#events [data-event]')];
+  const more = document.getElementById('more');
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  const today = new Date().toISOString().slice(0, 10);
+  let limit = PAGE_SIZE;
+
+  // Standard: ab heute (vergangene Events über "Von" oder Monat sichtbar machen)
+  form.from.value = today;
+
+  function apply() {
+    const q = form.q.value.trim().toLowerCase();
+    const { value: month } = form.month;
+    const from = form.from.value, to = form.to.value;
+    const matches = items.filter((li) => {
+      const d = li.dataset.date;
+      if (q && !q.split(/\s+/).every((w) => li.dataset.search.includes(w))) return false;
+      if (month && !d.startsWith(month)) return false;
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+      return true;
+    });
+    items.forEach((li) => (li.hidden = true));
+    matches.slice(0, limit).forEach((li) => (li.hidden = false));
+    more.classList.toggle('hidden', matches.length <= limit);
+    empty.classList.toggle('hidden', matches.length > 0);
+    count.textContent = `${matches.length} Veranstaltung${matches.length === 1 ? '' : 'en'}`;
+  }
+
+  // Monatswahl setzt den Datumsbereich zurück, damit sich die Filter nicht widersprechen
+  form.month.addEventListener('change', () => { form.from.value = ''; form.to.value = ''; });
+  form.from.addEventListener('change', () => (form.month.value = ''));
+  form.to.addEventListener('change', () => (form.month.value = ''));
+  form.addEventListener('input', () => { limit = PAGE_SIZE; apply(); });
+  form.addEventListener('change', () => { limit = PAGE_SIZE; apply(); });
+  form.addEventListener('reset', () => setTimeout(() => { form.from.value = today; limit = PAGE_SIZE; apply(); }));
+  more.addEventListener('click', () => { limit += PAGE_SIZE; apply(); });
+  apply();
+</script>

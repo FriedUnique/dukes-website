@@ -1,17 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AreaCard from '../components/AreaCard.astro';
-const u = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
+import WeeklyMenu from '../components/WeeklyMenu.astro';
+import EventCard from '../components/EventCard.astro';
+import { getEvents } from '../lib/content';
+import { contact } from '../data/nav';
+
 const areas = [
-  { title: 'Restaurant', text: 'Saftige Steaks, Mittagsmenü und Abendkarte.', img: u('photo-1544025162-d76694265947'), href: '/restaurant' },
-  { title: 'Events', text: 'Feiern, Firmenanlässe und Veranstaltungen.', img: u('photo-1519167758481-83f550bb49b3'), href: '/veranstaltungen' },
-  { title: 'Sihl3 Club', text: 'Feiern bis in die Nacht.', img: u('photo-1514525253161-7a46d19cd819'), href: '/veranstaltungen', tag: 'MI–SO ab 20:00' },
+  { title: 'Restaurant', text: 'Mittagsmenü unter der Woche, am Abend Steaks und Klassiker. Mit Saloon, Wintergarten und Terrasse.', img: '/images/restaurant.jpg', href: '#wochenmenu' },
+  { title: 'Events', text: 'Eventsaal für Feiern, Firmenanlässe und Live-Bands.', img: '/images/eventsaal.jpg', href: '/veranstaltungen' },
+  { title: 'Sihl3 Club', text: 'Partylokal seit 1997 – feiern bis in die Nacht.', img: '/images/sihl3-club.jpg', href: '/veranstaltungen', tag: 'MI–SO ab 20:00' },
 ];
+
+// Im Build die nächsten Events vorrendern; vergangene blendet das Script im Browser aus.
+const today = new Date(); today.setUTCHours(0, 0, 0, 0);
+const nextEvents = (await getEvents()).filter((e) => +e.data.date >= +today).slice(0, 6);
+const SHOW = 3;
 ---
 <Layout>
-  <section class="relative isolate flex min-h-[80vh] items-center justify-center overflow-hidden bg-wood">
-    <img src={u('photo-1555939594-58d7cb561ad1', 1800)} alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" fetchpriority="high" />
-    <div class="absolute inset-0 -z-10 bg-bark/40"></div>
+  <section class="relative isolate flex h-[75vh] min-h-[420px] max-h-[760px] items-center justify-center overflow-hidden bg-wood">
+    <img src="/images/bar.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" fetchpriority="high" />
+    <div class="absolute inset-0 -z-10 bg-bark/45"></div>
     <h1 class="px-5 text-center text-5xl text-cream drop-shadow-lg sm:text-7xl lg:text-8xl">Steak, Saloon &amp; <span class="text-gold">Stimmung</span></h1>
   </section>
 
@@ -19,34 +28,63 @@ const areas = [
     <div class="mx-auto grid max-w-7xl gap-px px-5 py-6 text-center text-sm sm:grid-cols-3">
       <p><strong class="text-gold">Restaurant</strong> MO–FR 08:00–14:00 · MI–SA ab 18:00</p>
       <p><strong class="text-gold">Club</strong> MI–SO ab 20:00</p>
-      <p><strong class="text-gold">Reservation</strong> 043 244 40 40</p>
+      <p><strong class="text-gold">Reservation</strong> <a href={contact.phoneHref} class="hover:text-gold">{contact.phone}</a></p>
     </div>
   </section>
 
-  <section class="mx-auto max-w-7xl px-5 py-20">
-    <div class="max-w-2xl">
-      <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Unsere Bereiche</p>
-      <h2 class="mt-2 text-4xl sm:text-5xl">Das erwartet Sie</h2>
-      <p class="mt-4 text-bark/75">Essen, feiern, geniessen.</p>
-    </div>
+  <section id="bereiche" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20">
+    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Unsere Bereiche</p>
+    <h2 class="mt-2 text-4xl sm:text-5xl">Essen, trinken, tanzen</h2>
     <div class="mt-10 grid gap-5 md:grid-cols-3">
       {areas.map((a) => <AreaCard {...a} />)}
     </div>
   </section>
 
-  <section class="bg-sand">
+  <section id="wochenmenu" class="scroll-mt-20 bg-cream">
+    <div class="mx-auto max-w-7xl px-5 pb-20">
+      <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Mittagstisch</p>
+      <h2 class="mt-2 text-4xl sm:text-5xl">Wochenmenü</h2>
+      <div class="mt-6"><WeeklyMenu /></div>
+    </div>
+  </section>
+
+  <section id="veranstaltungen" class="scroll-mt-20 border-t border-bark/10">
+    <div class="mx-auto max-w-7xl px-5 py-20">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Demnächst</p>
+          <h2 class="mt-2 text-4xl sm:text-5xl">Veranstaltungen</h2>
+        </div>
+        <a href="/veranstaltungen" class="font-semibold text-rust hover:underline">Alle Veranstaltungen →</a>
+      </div>
+      <ul id="next-events" class="mt-8 grid gap-4 md:grid-cols-3">
+        {nextEvents.map((e) => <EventCard event={e} compact />)}
+      </ul>
+      <p id="no-events" class:list={['mt-8 text-bark/70', nextEvents.length && 'hidden']}>Aktuell sind keine Veranstaltungen geplant.</p>
+    </div>
+  </section>
+
+  <section id="lokal-mieten" class="scroll-mt-20 bg-sand">
     <div class="mx-auto grid max-w-7xl gap-8 px-5 py-16 md:grid-cols-2 md:items-center">
       <div>
         <h2 class="text-4xl">Lokal mieten</h2>
-        <p class="mt-4 text-bark/80">Ob Firmenfeier, Geburtstag oder Hochzeit: Eventsaal, Saloon und Club bieten den passenden Rahmen mit Gastro-Service aus einer Hand.</p>
-        <a href="/lokal-mieten" class="mt-6 inline-block rounded-full bg-ink px-7 py-3 font-semibold text-cream hover:bg-rust">Anfrage stellen</a>
+        <p class="mt-4 text-bark/80">Ob Firmenfeier, Geburtstag oder Hochzeit: Eventsaal (190 m²), Club (150 m²), Saloon (70 m²) und Wintergarten (60 m²) bieten den passenden Rahmen – mit Gastro-Service aus einer Hand und Parkplätzen direkt vor dem Haus.</p>
+        <a href={`mailto:${contact.email}?subject=Anfrage%20Lokal%20mieten`} class="mt-6 inline-block rounded-full bg-ink px-7 py-3 font-semibold text-cream hover:bg-rust">Anfrage stellen</a>
       </div>
       <div class="rounded-2xl bg-wood p-8 text-cream">
         <h3 class="text-2xl text-gold">Reservation</h3>
-        <p class="mt-3">Telefon <a class="font-semibold underline" href="tel:+41432444040">043 244 40 40</a></p>
-        <p>E-Mail <a class="font-semibold underline" href="mailto:reservation@dukes.ch">reservation@dukes.ch</a></p>
+        <p class="mt-3">Telefon <a class="font-semibold underline" href={contact.phoneHref}>{contact.phone}</a></p>
+        <p>E-Mail <a class="font-semibold underline" href={`mailto:${contact.email}`}>{contact.email}</a></p>
         <p class="mt-3 text-sm text-cream/80">Anfragen werden bis 10:00 des Tages bearbeitet, Bestätigung nur per E-Mail.</p>
       </div>
     </div>
   </section>
 </Layout>
+
+<script define:vars={{ SHOW }}>
+  const today = new Date().toISOString().slice(0, 10);
+  const items = [...document.querySelectorAll('#next-events [data-event]')];
+  const upcoming = items.filter((li) => li.dataset.date >= today);
+  items.forEach((li) => (li.hidden = !upcoming.slice(0, SHOW).includes(li)));
+  if (!upcoming.length) document.getElementById('no-events').classList.remove('hidden');
+</script>

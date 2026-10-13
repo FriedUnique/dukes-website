@@ -1,12 +1,13 @@
 ---
 import { nav } from '../data/nav';
 const path = Astro.url.pathname;
-const active = (h: string) => (h === '/' ? path === '/' : path.startsWith(h));
+const active = (h: string) => (h.includes('#') ? false : h === '/' ? path === '/' : path.startsWith(h));
 ---
 <header class="sticky top-0 z-50 bg-ink/95 backdrop-blur border-b border-gold/20">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
-    <a href="/" class="font-display text-2xl font-bold text-gold" aria-label="dukes – Start">
-      dukes<span class="text-cream/60 text-sm font-sans font-medium ml-2 hidden sm:inline">sihl3</span>
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-2">
+    <a href="/" aria-label="dukes – Start" class="shrink-0">
+      <!-- Original-Logo ist schwarz; per Filter weiss auf dem dunklen Header -->
+      <img src="/brand/dukes-logo.png" alt="dukes – essen, trinken, tanzen" width="768" height="371" class="h-12 w-auto brightness-0 invert" />
     </a>
     <nav class="hidden lg:flex gap-7" aria-label="Hauptnavigation">
       {nav.map((n) => (
@@ -26,9 +27,8 @@ const active = (h: string) => (h === '/' ? path === '/' : path.startsWith(h));
 <script>
   const b = document.getElementById('menu-btn')!;
   const m = document.getElementById('mobile-nav')!;
-  b.addEventListener('click', () => {
-    const open = m.classList.toggle('hidden') === false;
-    b.setAttribute('aria-expanded', String(open));
-  });
+  const set = (open: boolean) => { m.classList.toggle('hidden', !open); b.setAttribute('aria-expanded', String(open)); };
+  b.addEventListener('click', () => set(m.classList.contains('hidden')));
+  // Anker-Links (/#wochenmenu) schliessen das Menü
+  m.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
 </script>
-
