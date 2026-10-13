@@ -3,30 +3,19 @@ import Layout from '../layouts/Layout.astro';
 import AreaCard from '../components/AreaCard.astro';
 const u = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
 const areas = [
-  { title: 'Restaurant', text: 'Saftige Steaks, Mittagsmenü und Abendkarte.', img: u('photo-1544025162-d76694265947'), href: '/restaurant', cls: 'md:col-span-2' },
-  { title: 'Eventsaal', text: 'Firmenanlässe, Hochzeiten, Partys.', img: u('photo-1519167758481-83f550bb49b3'), href: '/lokal-mieten' },
+  { title: 'Restaurant', text: 'Saftige Steaks, Mittagsmenü und Abendkarte.', img: u('photo-1544025162-d76694265947'), href: '/restaurant' },
+  { title: 'Events', text: 'Feiern, Firmenanlässe und Veranstaltungen.', img: u('photo-1519167758481-83f550bb49b3'), href: '/veranstaltungen' },
   { title: 'Sihl3 Club', text: 'Feiern bis in die Nacht.', img: u('photo-1514525253161-7a46d19cd819'), href: '/veranstaltungen', tag: 'MI–SO ab 20:00' },
-  { title: 'Saloon', text: 'Drinks, Billard und Western-Flair.', img: u('photo-1470337458703-46ad1756a187'), href: '/restaurant' },
-  { title: 'Aussenbereich / Terrasse', text: 'Sommerabende unter freiem Himmel.', img: u('photo-1414235077428-338989a2e8c0'), href: '/restaurant', cls: 'md:col-span-2' },
-  { title: 'Fonduestübli', text: 'Gemütlich geniessen, Fr/Sa ab 18:00.', img: u('photo-1531928351158-2f736078e0a1'), href: '/restaurant', tag: 'FR/SA' },
 ];
 ---
 <Layout>
-  <section class="relative isolate flex min-h-[85vh] items-center overflow-hidden bg-ink">
-    <img src={u('photo-1555939594-58d7cb561ad1', 1800)} alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-50" fetchpriority="high" />
-    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/70 to-transparent"></div>
-    <div class="mx-auto w-full max-w-7xl px-5 py-24">
-      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-gold">Restaurant · Partylokal · Sihl3</p>
-      <h1 class="mt-4 max-w-3xl text-5xl text-cream sm:text-6xl lg:text-7xl">Steaks, Saloon &amp; <span class="text-gold">Stimmung.</span></h1>
-      <p class="mt-6 max-w-xl text-lg text-cream/85">Rustikal, warm und mitten in Zürich: Geniessen Sie Mittag- und Abendessen, feiern Sie im Club oder mieten Sie unser Lokal für Ihren Anlass.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="tel:+41432444040" class="rounded-full bg-gold px-7 py-3 font-semibold text-ink transition hover:bg-gold-dark hover:text-cream">Tisch reservieren</a>
-        <a href="/wochenmenu" class="rounded-full border border-cream/40 px-7 py-3 font-semibold text-cream transition hover:border-gold hover:text-gold">Wochenmenü ansehen</a>
-      </div>
-    </div>
+  <section class="relative isolate flex min-h-[80vh] items-center justify-center overflow-hidden bg-wood">
+    <img src={u('photo-1555939594-58d7cb561ad1', 1800)} alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" fetchpriority="high" />
+    <div class="absolute inset-0 -z-10 bg-bark/40"></div>
+    <h1 class="px-5 text-center text-5xl text-cream drop-shadow-lg sm:text-7xl lg:text-8xl">Steak, Saloon &amp; <span class="text-gold">Stimmung</span></h1>
   </section>
 
-  <section class="bg-bark text-cream">
+  <section class="bg-ink text-cream">
     <div class="mx-auto grid max-w-7xl gap-px px-5 py-6 text-center text-sm sm:grid-cols-3">
       <p><strong class="text-gold">Restaurant</strong> MO–FR 08:00–14:00 · MI–SA ab 18:00</p>
       <p><strong class="text-gold">Club</strong> MI–SO ab 20:00</p>
@@ -37,11 +26,11 @@ const areas = [
   <section class="mx-auto max-w-7xl px-5 py-20">
     <div class="max-w-2xl">
       <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Unsere Bereiche</p>
-      <h2 class="mt-2 text-4xl sm:text-5xl">Ein Haus, sechs Erlebnisse</h2>
-      <p class="mt-4 text-bark/75">Vom Mittagstisch bis zur Clubnacht – entdecken Sie, was dukes zu bieten hat.</p>
+      <h2 class="mt-2 text-4xl sm:text-5xl">Das erwartet Sie</h2>
+      <p class="mt-4 text-bark/75">Essen, feiern, geniessen.</p>
     </div>
     <div class="mt-10 grid gap-5 md:grid-cols-3">
-      {areas.map((a) => <AreaCard {...a} class={a.cls} />)}
+      {areas.map((a) => <AreaCard {...a} />)}
     </div>
   </section>
 
@@ -50,13 +39,13 @@ const areas = [
       <div>
         <h2 class="text-4xl">Lokal mieten</h2>
         <p class="mt-4 text-bark/80">Ob Firmenfeier, Geburtstag oder Hochzeit: Eventsaal, Saloon und Club bieten den passenden Rahmen mit Gastro-Service aus einer Hand.</p>
-        <a href="/lokal-mieten" class="mt-6 inline-block rounded-full bg-bark px-7 py-3 font-semibold text-cream hover:bg-rust">Anfrage stellen</a>
+        <a href="/lokal-mieten" class="mt-6 inline-block rounded-full bg-ink px-7 py-3 font-semibold text-cream hover:bg-rust">Anfrage stellen</a>
       </div>
-      <div class="rounded-2xl bg-bark p-8 text-cream">
+      <div class="rounded-2xl bg-wood p-8 text-cream">
         <h3 class="text-2xl text-gold">Reservation</h3>
         <p class="mt-3">Telefon <a class="font-semibold underline" href="tel:+41432444040">043 244 40 40</a></p>
         <p>E-Mail <a class="font-semibold underline" href="mailto:reservation@dukes.ch">reservation@dukes.ch</a></p>
-        <p class="mt-3 text-sm text-cream/70">Anfragen werden bis 10:00 des Tages bearbeitet, Bestätigung nur per E-Mail.</p>
+        <p class="mt-3 text-sm text-cream/80">Anfragen werden bis 10:00 des Tages bearbeitet, Bestätigung nur per E-Mail.</p>
       </div>
     </div>
   </section>
