@@ -5,6 +5,7 @@ import WeeklyMenu from '../components/WeeklyMenu.astro';
 import EventCard from '../components/EventCard.astro';
 import { getEvents } from '../lib/content';
 import { contact, bookingUrl } from '../data/nav';
+import { Image } from 'astro:assets';
 
 const areas = [
   { title: 'Restaurant', text: 'Mittagsmenü unter der Woche, am Abend Steaks und Klassiker. Mit Saloon, Wintergarten und Terrasse.', img: '/images/restaurant.jpg', href: '#wochenmenu' },
@@ -32,7 +33,7 @@ const SHOW = 3;
     </div>
   </section>
 
-  <section id="bereiche" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20">
+  <section id="bereiche" class="d-none mx-auto max-w-7xl scroll-mt-20 px-5 py-20">
     <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rust">Unsere Bereiche</p>
     <h2 class="mt-2 text-4xl sm:text-5xl">Essen, trinken, tanzen</h2>
     <div class="mt-10 grid gap-5 md:grid-cols-3">

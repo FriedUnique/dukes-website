@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props { title: string; text: string; img: string; href: string; tag?: string; class?: string }
 const { title, text, img, href, tag, class: cls = '' } = Astro.props;
 ---
