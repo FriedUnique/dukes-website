@@ -1,0 +1,44 @@
+---
+// Reservations-Dialog mit dem myLocalina-Widget von local.ch.
+// Jeder Link mit [data-reserve] öffnet ihn. Das iframe lädt erst beim Öffnen,
+// damit local.ch (inkl. Cookie-Banner) nicht bei jedem Seitenaufruf geladen wird.
+// Ohne JavaScript öffnen die Links das Widget einfach in einem neuen Tab.
+import { bookingWidgetId, bookingUrl, contact } from '../data/nav';
+---
+{bookingWidgetId && (
+  <dialog id="reserve-dialog" aria-labelledby="reserve-title" class="m-auto h-dvh max-h-dvh w-full max-w-none bg-cream p-0 backdrop:bg-bark/60 sm:h-[85vh] sm:max-w-lg sm:rounded-2xl">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between bg-ink px-5 py-3 text-cream">
+        <h2 id="reserve-title" class="text-xl text-gold">Tisch reservieren</h2>
+        <button type="button" data-close class="p-1 text-2xl leading-none hover:text-gold" aria-label="Schliessen">&times;</button>
+      </div>
+      <iframe data-src={bookingUrl} title="Reservation dukes Restaurant" class="w-full flex-1 bg-white" loading="lazy"></iframe>
+      <p class="px-5 py-3 text-xs text-bark/70">
+        Probleme mit dem Formular? <a href={bookingUrl} target="_blank" rel="noopener" class="underline">In neuem Fenster öffnen</a>
+        oder <a href={contact.phoneHref} class="underline">{contact.phone}</a>.
+      </p>
+    </div>
+  </dialog>
+)}
+
+<script>
+  const dialog = document.getElementById('reserve-dialog') as HTMLDialogElement | null;
+  if (dialog) {
+    const frame = dialog.querySelector('iframe')!;
+    const open = () => {
+      if (!frame.src) frame.src = frame.dataset.src!;
+      dialog.showModal();
+    };
+    document.addEventListener('click', (e) => {
+      const link = (e.target as Element).closest('[data-reserve]');
+      if (!link) return;
+      e.preventDefault();
+      open();
+    });
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    // Klick auf den abgedunkelten Hintergrund schliesst
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+    // Direktlink: dukes.ch/#reservieren
+    if (location.hash === '#reservieren') open();
+  }
+</script>

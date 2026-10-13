@@ -20,3 +20,11 @@ export const contact = {
   facebook: 'https://www.facebook.com/dukesrestaurant',
   instagram: 'https://www.instagram.com/dukes_sihlbrugg',
 };
+
+// myLocalina / local.ch Reservations-Widget.
+// ID = letzter Teil der local.ch-Eintrags-URL (".../dukes-restaurant-nywC96knpXITaCh_OROwUA").
+// Leer lassen ('') → "Tisch reservieren" führt stattdessen zur Kontaktseite.
+export const bookingWidgetId = 'nywC96knpXITaCh_OROwUA';
+export const bookingUrl = bookingWidgetId
+  ? `https://bookingwidget.local.ch/${bookingWidgetId}?lang=de&themeVariant=lagertha`
+  : '/kontakt';
