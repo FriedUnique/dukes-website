@@ -15,13 +15,14 @@ const dayDate = (i: number) => {
     </div>
 
     <!-- Menü 1: wechselt täglich -->
-    <h3 class="mt-6 text-2xl">Menü 1 <span class="text-base font-normal text-bark/60">· täglich wechselnd · {menu.data.menu1Price}</span></h3>
+    <h3 class="mt-6 text-2xl">Menü 1 <span class="text-base font-normal text-bark/60">· täglich wechselnd</span></h3>
     <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {menu.data.daily.map((d, i) => (
         <article class="flex flex-col rounded-2xl bg-white/70 p-5 shadow-sm ring-1 ring-bark/10">
           <p class="text-xs font-semibold uppercase tracking-widest text-rust">{d.day} <span class="text-bark/50">{dayDate(i)}</span></p>
           {d.soup && <p class="mt-2 text-sm italic text-bark/70">{d.soup}</p>}
           <p class="mt-2 font-semibold leading-snug">{d.dish}</p>
+          {(d.price ?? menu.data.menu1Price) && <p class="mt-auto pt-3 font-semibold">{d.price ?? menu.data.menu1Price}</p>}
         </article>
       ))}
     </div>

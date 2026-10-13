@@ -18,11 +18,12 @@ const wochenmenu = defineCollection({
     from: z.coerce.date(),             // Montag der Woche
     to: z.coerce.date(),               // Freitag der Woche
     note: z.string().default('Vorspeise inklusive Salat oder Suppe'),
-    menu1Price: z.string(),            // Preis Menü 1 (gilt für alle Tage)
+    menu1Price: z.string().optional(), // Standardpreis Menü 1 (für Tage ohne eigenen Preis)
     daily: z.array(z.object({          // Menü 1 – wechselt täglich
       day: z.string(),                 // z.B. "Montag"
       soup: z.string().optional(),
       dish: z.string(),
+      price: z.string().optional(),    // Preis nur für diesen Tag, z.B. "CHF 23.00"
     })),
     specials: z.array(dish).default([]), // z.B. Monats-Special, Dukes Bowle
     menus: z.array(dish).default([]),    // Menü 2 / Menü 3 – ganze Woche gleich

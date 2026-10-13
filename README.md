@@ -17,8 +17,8 @@ Neue Datei in `src/content/wochenmenu/`, z.B. `2026-kw43.md` – am einfachsten 
 | Feld | Bedeutung |
 |---|---|
 | `week`, `from`, `to` | Titel und Montag/Freitag der Woche |
-| `menu1Price` | Preis Menü 1 |
-| `daily` | **Menü 1** – pro Tag `day`, `soup`, `dish` |
+| `menu1Price` | Standardpreis Menü 1 (optional) – gilt für alle Tage ohne eigenen `price` |
+| `daily` | **Menü 1** – pro Tag `day`, `soup`, `dish`, optional `price` (überschreibt `menu1Price`) |
 | `specials` | z.B. Monats-Special, Dukes Bowle (`name`, `dish`, `description`, `price`) |
 | `menus` | **Menü 2 / Menü 3** – gelten die ganze Woche (`name`, `tag`, `dish`, `price`) |
 
