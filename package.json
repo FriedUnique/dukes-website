@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-cms.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/copy-cms.mjs",
     "build": "astro build",
     "preview": "astro preview"
   },
@@ -14,5 +16,8 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
     "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@sveltia/cms": "0.246.1"
   }
 }

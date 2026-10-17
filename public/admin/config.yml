@@ -1,0 +1,100 @@
+# Sveltia CMS – Editor unter https://dukes.ch/admin
+# Änderungen werden als Commit ins GitHub-Repo gespeichert; GitHub Actions baut & veröffentlicht die Seite.
+# Doku: https://github.com/sveltia/sveltia-cms
+
+backend:
+  name: github
+  repo: FriedUnique/dukes-website
+  branch: main
+  # Login per "Mit GitHub anmelden" braucht einen kleinen OAuth-Helfer (z.B. sveltia-cms-auth auf Cloudflare Workers):
+  # base_url: https://dukes-cms-auth.<account>.workers.dev
+  # Ohne base_url: Anmeldung mit persönlichem GitHub-Token (siehe security_info.md).
+
+media_folder: public/events
+public_folder: /events
+media_libraries:
+  default:
+    config:
+      max_file_size: 5000000 # 5 MB
+      slugify_filename: true # "Plakat Silvester.JPG" -> "plakat-silvester.jpg"
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: events
+    label: Veranstaltungen
+    label_singular: Veranstaltung
+    folder: src/content/events
+    create: true
+    delete: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    summary: "{{date}} – {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Titel, widget: string }
+      - { name: date, label: Datum, widget: datetime, time_format: false, format: "YYYY-MM-DD", date_format: "DD.MM.YYYY" }
+      - name: time
+        label: Zeit
+        widget: string
+        required: false
+        hint: "z.B. 20:00"
+        pattern: ['^\d{1,2}[:.]\d{2}$', "Bitte im Format 20:00"]
+      - name: area
+        label: Bereich
+        widget: select
+        default: Sihl3 Club
+        options: [Eventsaal, Sihl3 Club, Saloon, Restaurant, Terrasse, Fonduestübli]
+      - { name: price, label: "Preis / Eintritt", widget: string, required: false, hint: "z.B. Eintritt frei" }
+      - { name: image, label: Plakat, widget: image, required: false, accept: "image/jpeg,image/png,image/webp" }
+      - { name: draft, label: "Entwurf (nicht veröffentlichen)", widget: boolean, default: false, required: false }
+      - { name: body, label: Beschreibung, widget: text, required: false, hint: "Reiner Text. Leerzeile = neuer Absatz." }
+
+  - name: wochenmenu
+    label: Wochenmenü
+    label_singular: Wochenmenü
+    description: "Tipp: Letzte Woche öffnen und mit «Duplizieren» als Vorlage verwenden."
+    folder: src/content/wochenmenu
+    format: frontmatter
+    create: true
+    delete: true
+    identifier_field: week
+    slug: "{{year}}-{{slug}}"
+    summary: "{{week}} (ab {{from}})"
+    sortable_fields: [from]
+    fields:
+      - { name: week, label: Woche, widget: string, hint: "z.B. KW 43" }
+      - { name: from, label: "Montag (Start)", widget: datetime, time_format: false, format: "YYYY-MM-DD", date_format: "DD.MM.YYYY" }
+      - { name: to, label: "Freitag (Ende)", widget: datetime, time_format: false, format: "YYYY-MM-DD", date_format: "DD.MM.YYYY" }
+      - { name: note, label: Hinweis, widget: string, default: "Vorspeise inklusive Salat oder Suppe" }
+      - { name: menu1Price, label: "Menü 1 – Standardpreis", widget: string, required: false, hint: "z.B. CHF 21.00" }
+      - name: daily
+        label: "Menü 1 (täglich)"
+        label_singular: Tag
+        widget: list
+        summary: "{{day}}: {{dish}}"
+        fields:
+          - { name: day, label: Tag, widget: select, options: [Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag, Sonntag] }
+          - { name: soup, label: Suppe, widget: string, required: false }
+          - { name: dish, label: Hauptgang, widget: string }
+          - { name: price, label: "Preis (nur falls abweichend)", widget: string, required: false }
+      - name: specials
+        label: "Specials (z.B. Monats-Special, Dukes Bowle)"
+        label_singular: Special
+        widget: list
+        required: false
+        summary: "{{name}}: {{dish}}"
+        fields: &dish
+          - { name: name, label: Name, widget: string }
+          - { name: tag, label: "Label (optional)", widget: string, required: false, hint: "z.B. Vegetarisch" }
+          - { name: dish, label: Gericht, widget: string }
+          - { name: description, label: "Beschreibung (optional)", widget: string, required: false }
+          - { name: price, label: Preis, widget: string }
+      - name: menus
+        label: "Menü 2 / Menü 3 (ganze Woche)"
+        label_singular: Menü
+        widget: list
+        required: false
+        summary: "{{name}}: {{dish}}"
+        fields: *dish
