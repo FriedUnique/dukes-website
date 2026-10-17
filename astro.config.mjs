@@ -1,8 +1,23 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+// Der Dev-Server liefert für Ordner in public/ kein index.html aus (Apache schon).
+// Damit /admin auch bei `npm run dev` funktioniert:
+const adminDevIndex = {
+  name: 'admin-dev-index',
+  hooks: {
+    'astro:server:setup': ({ server }) => {
+      server.middlewares.use((req, _res, next) => {
+        if (req.url === '/admin' || req.url === '/admin/') req.url = '/admin/index.html';
+        next();
+      });
+    },
+  },
+};
+
 export default defineConfig({
   site: 'https://dukes.ch',
+  integrations: [adminDevIndex],
   // Alte Unterseiten zeigen auf die Abschnitte der Startseite
   // (zusätzlich als echte 301-Weiterleitung in public/.htaccess)
   redirects: {
