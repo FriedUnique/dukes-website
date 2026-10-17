@@ -30,16 +30,21 @@ const wochenmenu = defineCollection({
   }),
 });
 
+// Kurze Texte; Längenlimits verhindern versehentlich riesige Einträge.
+const text = (max: number) => z.string().trim().min(1).max(max);
+// Nur lokale Bilder aus public/events/ (keine externen URLs, kein javascript: usw.)
+const localImage = z.string().regex(/^\/events\/[a-z0-9][a-z0-9._-]*\.(jpe?g|png|webp)$/i, 'Bild muss unter /events/ liegen, z.B. /events/plakat.jpg');
+
 // Eine Datei pro Veranstaltung in src/content/events/
 const events = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/events' }),
   schema: z.object({
-    title: z.string(),
+    title: text(120),
     date: z.coerce.date(),
-    time: z.string().optional(),       // z.B. "20:00"
+    time: z.string().regex(/^\d{1,2}[:.]\d{2}$/, 'Zeit im Format 20:00').optional(),
     area: z.enum(['Eventsaal', 'Sihl3 Club', 'Saloon', 'Restaurant', 'Terrasse', 'Fonduestübli']).default('Sihl3 Club'),
-    image: z.string().optional(),      // z.B. /events/plakat.jpg (Datei in public/events/)
-    price: z.string().optional(),
+    image: localImage.optional(),      // z.B. /events/plakat.jpg (Datei in public/events/)
+    price: text(60).optional(),
     draft: z.boolean().default(false), // true = nur lokal (npm run dev) sichtbar
   }),
 });

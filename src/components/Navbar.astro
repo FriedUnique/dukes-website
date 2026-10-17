@@ -1,23 +1,14 @@
 ---
 import { nav, bookingUrl } from '../data/nav';
 const path = Astro.url.pathname;
-const active = (h: string) => (h.includes('#') && !(h === '/#') ? false : h === '/' ? path === '/' : path.startsWith(h));
 
-const isActive = (href: string, pathname: string) => {
-  // Highlight START whenever on the root route '/'
-  if (href === '/#') {
-    return pathname === '/';
-  }
-
-  // Subpages (/veranstaltungen, /ueber-uns, /kontakt)
-  if (!href.includes('#')) {
-    return pathname.startsWith(href);
-  }
-
-  // In-page hash anchors remain unhighlighted
-  return false;
+// START bleibt auf der ganzen Startseite aktiv (auch bei /#wochenmenu usw.),
+// Unterseiten werden über ihren Pfad bzw. `match` hervorgehoben.
+const isActive = (n: (typeof nav)[number]) => {
+  if (n.href === '/' || n.href === '/#') return path === '/';
+  if (n.match) return path.startsWith(n.match);
+  return !n.href.includes('#') && path.startsWith(n.href);
 };
-
 ---
 <header class="sticky top-0 z-50 bg-ink/95 backdrop-blur border-b border-gold/20">
   <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-2">
@@ -27,7 +18,7 @@ const isActive = (href: string, pathname: string) => {
     </a>
     <nav class="hidden lg:flex gap-7" aria-label="Hauptnavigation">
       {nav.map((n) => (
-        <a href={n.href} class:list={['text-xs font-semibold tracking-widest py-2 border-b-2 transition-colors hover:text-gold', isActive(n.href, path) ? 'text-gold border-gold' : 'text-cream/80 border-transparent']}>{n.label}</a>
+        <a href={n.href} class:list={['text-xs font-semibold tracking-widest py-2 border-b-2 transition-colors hover:text-gold', isActive(n) ? 'text-gold border-gold' : 'text-cream/80 border-transparent']}>{n.label}</a>
       ))}
     </nav>
     <a href={bookingUrl} data-reserve target="_blank" class="hidden lg:inline-block rounded-full bg-gold px-4 py-2 text-xs font-bold tracking-widest text-ink hover:bg-cream">RESERVIEREN</a>
@@ -40,7 +31,7 @@ const isActive = (href: string, pathname: string) => {
   </div>
   <nav id="mobile-nav" class="hidden lg:hidden border-t border-gold/20 bg-ink px-5 pb-4" aria-label="Mobile Navigation">
     {nav.map((n) => (
-      <a href={n.href} class:list={['block py-3 text-sm font-semibold tracking-widest border-b border-white/5', isActive(n.href, path) ? 'text-gold' : 'text-cream/85']}>{n.label}</a>
+      <a href={n.href} class:list={['block py-3 text-sm font-semibold tracking-widest border-b border-white/5', isActive(n) ? 'text-gold' : 'text-cream/85']}>{n.label}</a>
     ))}
   </nav>
 </header>

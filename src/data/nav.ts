@@ -1,10 +1,11 @@
 // Restaurant, Wochenmenü und Lokal mieten sind Abschnitte der Startseite.
-export const nav = [
+// `match`: Pfad, auf dem der Eintrag zusätzlich hervorgehoben wird (Anker-Links sind sonst nie aktiv).
+export const nav: { label: string; href: string; match?: string }[] = [
   { label: 'START', href: '/#' },
   // { label: 'RESTAURANT', href: '/#bereiche' },
   { label: 'WOCHENMENU', href: '/#wochenmenu' },
   // { label: 'LOKAL MIETEN', href: '/#lokal-mieten' },
-  { label: 'VERANSTALTUNGEN', href: '/#veranstaltungen' },
+  { label: 'VERANSTALTUNGEN', href: '/#veranstaltungen', match: '/veranstaltungen' },
   { label: 'ÜBER UNS', href: '/ueber-uns' },
   { label: 'KONTAKT', href: '/kontakt' },
 ];

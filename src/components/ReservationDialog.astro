@@ -12,7 +12,10 @@ import { bookingWidgetId, bookingUrl, contact } from '../data/nav';
         <h2 id="reserve-title" class="text-xl text-gold">Tisch reservieren</h2>
         <button type="button" data-close class="p-1 text-2xl leading-none hover:text-gold" aria-label="Schliessen">&times;</button>
       </div>
-      <iframe data-src={bookingUrl} title="Reservation dukes Restaurant" class="w-full flex-1 bg-white" loading="lazy"></iframe>
+      <!-- sandbox: Widget darf Skripte/Formulare nutzen, aber unsere Seite nicht umleiten -->
+      <iframe data-src={bookingUrl} title="Reservation dukes Restaurant" class="w-full flex-1 bg-white" loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
       <p class="px-5 py-3 text-xs text-bark/70">
         Probleme mit dem Formular? <a href={bookingUrl} target="_blank" rel="noopener" class="underline">In neuem Fenster öffnen</a>
         oder <a href={contact.phoneHref} class="underline">{contact.phone}</a>.

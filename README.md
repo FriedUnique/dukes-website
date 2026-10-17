@@ -37,10 +37,21 @@ price: "CHF 20.–"          # optional
 image: "/events/silvester.jpg"  # optional, Datei in public/events/ ablegen
 draft: false               # true = nur lokal sichtbar
 ---
-Beschreibungstext …
+Beschreibungstext … (reiner Text, Leerzeile = neuer Absatz; HTML/Markdown wird nicht interpretiert)
 ```
+
+Bilder müssen unter `public/events/` liegen (`/events/name.jpg|png|webp`), externe URLs werden beim Build abgelehnt.
 
 Vergangene Events werden automatisch ausgeblendet (Startseite und Standardfilter „ab heute“), bleiben aber über den Filter auffindbar.
 Wie viele Events vor „Mehr anzeigen“ erscheinen: `PAGE_SIZE` in `src/pages/veranstaltungen.astro`.
 
 Hinweis: Die Seite ist statisch – nach Änderungen neu bauen/deployen.
+
+## Deployment & Sicherheit
+- Server braucht nur statische Dateien (Apache): `npm ci && npm run build`, Inhalt von `dist/` ins Web-Root.
+  Vorher die alte WordPress-Installation **vollständig** entfernen (nicht drüberkopieren).
+- `public/.htaccess` (landet in `dist/`): HTTPS-Zwang, HSTS, Clickjacking-Schutz, PHP-Ausführung gesperrt,
+  versteckte Dateien gesperrt, 301-Weiterleitungen der alten URLs.
+- Content-Security-Policy: `security.csp` in `astro.config.mjs` – nur eigene (gehashte) Skripte,
+  iframes nur von `bookingwidget.local.ch`. Neue externe Quellen dort freigeben, sonst blockiert der Browser sie.
+- Inhalte (Events, Menü) werden nie als HTML gerendert, Bildpfade sind auf `/events/` beschränkt.

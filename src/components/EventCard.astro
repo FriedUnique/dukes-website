@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { render } from 'astro:content';
 import { isoDay } from '../lib/content';
 interface Props { event: CollectionEntry<'events'>; compact?: boolean }
 const { event: e, compact = false } = Astro.props;
-const { Content } = await render(e);
+// Beschreibung bewusst als reiner Text (kein Markdown/HTML): auch ein kompromittiertes
+// Redaktions-Login kann so kein HTML oder JavaScript auf die Seite schmuggeln.
+const paragraphs = (e.body ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 const search = [e.data.title, e.data.area, e.body ?? ''].join(' ').toLowerCase();
 ---
 <li data-event data-date={isoDay(e.data.date)} data-search={search} class="flex gap-5 overflow-hidden rounded-2xl bg-sand p-5">
@@ -15,10 +16,12 @@ const search = [e.data.title, e.data.area, e.body ?? ''].join(' ').toLowerCase()
   <div class="min-w-0 flex-1">
     <h3 class="text-xl sm:text-2xl">{e.data.title}</h3>
     <p class="text-sm font-semibold text-rust">{e.data.area}{e.data.time && ` · ${e.data.time} Uhr`}{e.data.price && ` · ${e.data.price}`}</p>
-    {!compact && <div class="mt-2 text-bark/80"><Content /></div>}
+    {!compact && paragraphs.length > 0 && (
+      <div class="mt-2 space-y-2 whitespace-pre-line text-bark/80">{paragraphs.map((t) => <p>{t}</p>)}</div>
+    )}
   </div>
   {e.data.image && !compact && (
-    <a href={e.data.image} target="_blank" class="hidden shrink-0 sm:block">
+    <a href={e.data.image} target="_blank" rel="noopener" class="hidden shrink-0 sm:block">
       <img src={e.data.image} alt={`Plakat ${e.data.title}`} loading="lazy" class="h-32 w-auto rounded-lg shadow" />
     </a>
   )}
